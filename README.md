@@ -1,15 +1,14 @@
 # Improving the Chatbot Fallback Experience
-==============================
 
-This repository contains the implementation described in [Improving the Chatbot Experience: With a Content-based Recommender System](https://www.diva-portal.org/smash/get/diva2:1324846/FULLTEXT01.pdf), which is an independent thesis basic level (university diploma) degree project I did at Mid Sweden University in collaboration with Simple [[A]](https://simplea.com/).
+This repository contains the reference implementation for [Improving the Chatbot Experience: With a Content-based Recommender System](https://www.diva-portal.org/smash/get/diva2:1324846/FULLTEXT01.pdf), an independent thesis basic level (university diploma).
 
-This code was a hands-on part of my thesis project and is short-lived without maintenance. The repository was therefore archived.
+> Note: This code was developed specifically for the thesis and is no longer maintained. The repository is archived.
 
 ## Changelog
 
-[June 2019] Paper published.
+[June 2019] – Thesis published on DiVA.
 
-[Aug 2025] Added code for the paper to a public repository.
+[Aug 2025] – Source code made public here.
 
 ## Problem statement
 
@@ -17,13 +16,13 @@ Chatbots often fall back to generic “I’m sorry, I don’t understand” repl
 
 ## Solution overview
 
-1. Web Spider: Uses DotnetSpider to crawl configured seed URLs, extract text, and emit JSON records.
+1. **Web Spider**: Uses DotnetSpider to crawl configured seed URLs, extract text, and emit JSON records.
 
-2. Bag-of-Words Model: Normalizes and tokenizes scraped content, filters stop-words, and computes term frequencies.
+2. **Bag-of-Words Model**: Normalizes and tokenizes scraped content, filters stop-words, and computes term frequencies.
 
-3. Graph Store: Ingests articles, paragraphs, and keywords into Neo4j, modeling relationships and weighting occurrences.
+3. **Graph Store**: Ingests articles, paragraphs, and keywords into Neo4j, modeling relationships and weighting occurrences.
 
-4. GraphQL API: Receives fallback queries, traverses the graph to rank candidate passages, and returns the top recommendation for the chatbot.
+4. **GraphQL API**: Receives fallback queries, traverses the graph to rank candidate passages, and returns the top recommendation for the chatbot.
 
 ## Getting started
 
@@ -34,7 +33,7 @@ Chatbots often fall back to generic “I’m sorry, I don’t understand” repl
 
 ### Installation
 
-1. Clone the Git repository
+1. Clone this Git repository
 
 2. Set the correct configurations:
     - Edit `src/ChatbotRecommender.Crawler/appsettings.json` to specify your seed URLs and storage options (e.g. file vs database).
