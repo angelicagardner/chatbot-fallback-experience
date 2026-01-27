@@ -1,78 +1,115 @@
-# Improving the Chatbot Fallback Experience
+# Improving the Chatbot Experience: With a Content-Based Recommender System
 
-This repository contains the reference implementation for [Improving the Chatbot Experience: With a Content-based Recommender System](https://www.diva-portal.org/smash/get/diva2:1324846/FULLTEXT01.pdf), an independent thesis basic level (university diploma).
+This repository contains the reference implementation for [my thesis project](https://www.diva-portal.org/smash/get/diva2:1324846/FULLTEXT01.pdf) at Mid Sweden University (2019).
 
-> Note: This code was developed specifically for the thesis and is no longer maintained. The repository is archived.
+Chatbots often fall back to generic “I’m sorry, I don’t understand” replies whenever they can’t match user input to a scripted response. This leads to a poor user experience and missed opportunities for engagement.
 
-## Changelog
+My thesis project implemented a content-based recommender system to enrich chatbot fallbacks and deliver contextually relevant responses from a processed knowledge base.
+
+---
+
+## 🏛 System Architecture
+
+The system was built as a modular pipeline that transforms unstructured web data into actionable chatbot responses.
+
+- **Web Spider**: Uses `DotnetSpider` to crawl seed URLs and extract text.
+
+- **NLP Engine**: A Bag-of-Words model that normalizes content and computes term frequencies.
+
+- **Graph Store**: Ingests data into Neo4j, modeling weighted relationships between articles, paragraphs, and keywords.
+
+- **GraphQL API**: Receives fallback queries from Dialogflow, traverses the graph to rank candidates, and returns the top recommendation.
+
+```mermaid
+graph LR
+    A[Web Page] -->|DotnetSpider| B(Console App)
+    B -->|Scrape & Parse| C[JSON Storage]
+    C -->|Bag-of-Words| D(Data Processor)
+    D -->|MERGE| E[(Neo4j Graph)]
+    F[Dialogflow] <-->|Webhook| G(GraphQL API)
+    G <-->|Cypher| E
+```
+
+---
+
+## 🛠 Tech Stack & Tools (2019)
+
+  **Environment**: Developed using Visual Studio and Neo4j Browser for graph visualization.
+
+### Core Backend
+
+- **Framework**: .NET Core 2.2
+
+- **Language**: C# 7.3
+
+- **API Architecture**: GraphQL for .NET
+
+### Data Engineering & NLP
+
+- **Web Crawler**: `DotnetSpider` (Scraping, Crawling, and XPath Parsing)
+
+- **NLP Model**: Custom Bag-of-Words (BoW) implementation
+
+- **Text Processing**: Regex-based normalization and custom Stop-word filtering
+
+### Database & Storage
+
+- **Graph Database**: Neo4j (Property Graph Model)
+
+- **Query Language**: Cypher
+
+- **Communication**: Neo4j Bolt Driver for .NET
+
+### Conversational AI
+
+- **Platform**: Dialogflow (V1)
+
+- **Integration**: Webhook fulfillment via HTTPS/JSON
+
+---
+
+## 🛠 Implementation Details
+
+### Data Acquisition & Extraction
+
+- **Crawler Engine**: Built with `DotnetSpider` with a custom Selection Policy for domain-specific crawling.
+
+- **Extraction Logic**: Utilized **XPath** for targeted scraping of metadata (keywords, summary) and paragraph content.
+
+### NLP & Scoring Pipeline
+
+1. **Crawl**: Console App triggers the `SimpleaSpider`.
+
+2. **Store**: Data is persisted to JSON using `JsonFileStorage`.
+
+3. **Process**: Custom `DataProcessor` performs:
+    - **Text Normalization**: Lowercasing and regex-based punctuation removal.
+    - **Tokenization**: Filtering through a custom `stopwords.txt`.
+    - **Heuristic Scoring**: Calculating Word Count and Frequency Density to rank paragraph relevance.
+
+### Graph Architecture
+
+Data is modeled in **Neo4j** to allow for high-performance relationship traversal.
+
+- **Nodes**: `Article`, `Paragraph`, `Word`.
+
+- **Key Relationships**: `(Paragraph)-[:CONTAINS_WORD {count, frequency}]->(Word)`.
+
+## Conclusion & Future Work (2026 Perspective)
+
+The prototype successfully demonstrated that a weighted frequency approach can surface more relevant replies than a static default. If I were to rebuild this today with my current expertise, I would evolve the architecture into a modern **RAG** system:
+
+- **Embeddings**: Replace Bag-of-Words with Vector Embeddings (e.g., OpenAI or HuggingFace).
+
+- **Vector DB**: Use a dedicated Vector Database for semantic similarity search.
+
+- **LLM Integration**: Use an LLM to summarize retrieved paragraphs for a more natural conversational flow.
+
+## 📅 Changelog
 
 [June 2019] – Thesis published on DiVA.
 
-[Aug 2025] – Source code made public here.
-
-## Problem statement
-
-Chatbots often fall back to generic “I’m sorry, I don’t understand” replies whenever they can’t match user input to a scripted response. This leads to a poor user experience and missed opportunities for engagement. This project implements a content-based recommender system to enrich chatbot fallbacks. The aim is to deliver more informative, contextually relevant responses whenever the chatbot’s primary intent matcher fails.
-
-## Solution overview
-
-1. **Web Spider**: Uses DotnetSpider to crawl configured seed URLs, extract text, and emit JSON records.
-
-2. **Bag-of-Words Model**: Normalizes and tokenizes scraped content, filters stop-words, and computes term frequencies.
-
-3. **Graph Store**: Ingests articles, paragraphs, and keywords into Neo4j, modeling relationships and weighting occurrences.
-
-4. **GraphQL API**: Receives fallback queries, traverses the graph to rank candidate passages, and returns the top recommendation for the chatbot.
-
-## Getting started
-
-### Prerequisites
-
-- .NET SDK 7.0 or later
-- Neo4j 4.x or later
-
-### Installation
-
-1. Clone this Git repository
-
-2. Set the correct configurations:
-    - Edit `src/ChatbotRecommender.Crawler/appsettings.json` to specify your seed URLs and storage options (e.g. file vs database).
-    - In `src/ChatbotRecommender.Api/appsettings.json`, update the ConnectionStrings:Neo4j entry to point to your Neo4j instance (bolt URL, username, password).
-
-3. Build & Run
-```bash
-dotnet restore
-dotnet build
-```
-
-4. Run the crawler to scrape sites, process text into a bag-of-words model, and load data into your Neo4j graph:
-```bash
-dotnet run --project src/ChatbotRecommender.Crawler/ChatbotRecommender.Crawler.csproj
-```
-
-5. Check your Neo4j browser to confirm that Article, Paragraph, and Word nodes have been created.
-
-6. Start the API
-```bash
-dotnet run --project src/ChatbotRecommender.Api/ChatbotRecommender.Api.csproj
-```
-By default it listens on `http://localhost:5000`. You can now POST fallback queries:
-```bash
-curl -X POST http://localhost:5000/graphql \
-  -H "Content-Type: application/json" \
-  -d '{"query":"{ recommend(query:\"chatbot fallback\") { url, snippet } }"}'
-```
-
-### Tests
-
-Each component has its own test project. To execute all tests:
-```bash
-dotnet test
-```
-
-## Conclusion & Future Work
-
-The prototype demonstrated that a simple word-count scoring approach can surface more relevant fallback replies than a static default. However improvements, such as embedding-based similarity, deeper conversational context, and real-time incremental updates, would further enhance recommendation quality and system performance.
+[Jan 2026] – System architecture and documentation made public.
 
 ## Citation
 
