@@ -21,6 +21,9 @@ The system was built as a modular pipeline that transforms unstructured web data
 - **GraphQL API**: Receives fallback queries from Dialogflow, traverses the graph to rank candidates, and returns the top recommendation.
 
 ```mermaid
+---
+title: System Architecture Overview
+---
 graph LR
     A[Web Page] -->|DotnetSpider| B(Console App)
     B -->|Scrape & Parse| C[JSON Storage]
@@ -32,7 +35,9 @@ graph LR
 
 ## 🛠 Tech Stack & Tools (2019)
 
-  **Environment**: Developed using Visual Studio and Neo4j Browser for graph visualization.
+```
+**Environment**: Developed using Visual Studio and Neo4j Browser for graph visualization.
+```
 
 ### Core Backend
 
@@ -111,6 +116,9 @@ Data is modeled in **Neo4j** to allow for high-performance relationship traversa
 - **Key Relationships**: `(Paragraph)-[:CONTAINS_WORD {count, frequency}]->(Word)`.
 
 ```mermaid
+---
+title: The Graph Schema
+---
 erDiagram
     ARTICLE ||--o{ PARAGRAPH : HAS_PARAGRAPH
     ARTICLE ||--o{ WORD : TITLE_CONTAINS
@@ -122,7 +130,7 @@ erDiagram
     }
 ```
 
-## Conclusion & Future Work (2026 Perspective)
+## 🚀 Conclusion & Future Work (2026 Perspective)
 
 The prototype successfully demonstrated that a weighted frequency approach can surface more relevant replies than a static default. If I were to rebuild this today with my current expertise, I would evolve the architecture into a modern **RAG** system:
 
@@ -132,11 +140,13 @@ The prototype successfully demonstrated that a weighted frequency approach can s
 
 - **LLM Integration**: Use an LLM to summarize retrieved paragraphs for a more natural conversational flow.
 
-## 📅 Changelog
+---
 
-[June 2019] – Thesis published on DiVA.
+## Changelog
 
-[Jan 2026] – System architecture and documentation made public.
+**[June 2019]** – Thesis published on DiVA.
+
+**[Jan 2026]** – System architecture and documentation made public.
 
 ## Citation
 
