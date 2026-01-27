@@ -30,8 +30,6 @@ graph LR
     G <-->|Cypher| E
 ```
 
----
-
 ## 🛠 Tech Stack & Tools (2019)
 
   **Environment**: Developed using Visual Studio and Neo4j Browser for graph visualization.
@@ -66,8 +64,6 @@ graph LR
 
 - **Integration**: Webhook fulfillment via HTTPS/JSON
 
----
-
 ## 🛠 Implementation Details
 
 ### Data Acquisition & Extraction
@@ -87,6 +83,25 @@ graph LR
     - **Tokenization**: Filtering through a custom `stopwords.txt`.
     - **Heuristic Scoring**: Calculating Word Count and Frequency Density to rank paragraph relevance.
 
+```mermaid
+---
+title: The Fallback Sequence
+---
+sequenceDiagram
+    participant User
+    participant Dialogflow
+    participant GraphQL_API
+    participant Neo4j
+
+    User->>Dialogflow: "How do chatbots work?"
+    Dialogflow->>Dialogflow: No Intent Match (Fallback)
+    Dialogflow->>GraphQL_API: POST Webhook (Subject: chatbots)
+    GraphQL_API->>Neo4j: Query Top Recommendation
+    Neo4j-->>GraphQL_API: Return Article + Highest Scored Paragraph
+    GraphQL_API-->>Dialogflow: Return Recommendation Text
+    Dialogflow-->>User: "I found this: [Paragraph Content]..."
+```
+
 ### Graph Architecture
 
 Data is modeled in **Neo4j** to allow for high-performance relationship traversal.
@@ -94,6 +109,18 @@ Data is modeled in **Neo4j** to allow for high-performance relationship traversa
 - **Nodes**: `Article`, `Paragraph`, `Word`.
 
 - **Key Relationships**: `(Paragraph)-[:CONTAINS_WORD {count, frequency}]->(Word)`.
+
+```mermaid
+erDiagram
+    ARTICLE ||--o{ PARAGRAPH : HAS_PARAGRAPH
+    ARTICLE ||--o{ WORD : TITLE_CONTAINS
+    ARTICLE ||--o{ WORD : SUMMARY_CONTAINS
+    PARAGRAPH ||--o{ WORD : PARAGRAPH_CONTAINS
+    PARAGRAPH_CONTAINS {
+        int count
+        int frequency
+    }
+```
 
 ## Conclusion & Future Work (2026 Perspective)
 
