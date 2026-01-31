@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotnetSpider" Version="3.0.0" />
+    <PackageReference Include="DotnetSpider.HtmlAgilityPack" Version="3.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+
+    <ProjectReference Include="..\ABot.RecommenderSystem\ABot.RecommenderSystem.csproj" />
+  </ItemGroup>
+
+</Project>
