@@ -35,9 +35,7 @@ graph LR
 
 ## 🛠 Tech Stack & Tools (2019)
 
-```
-**Environment**: Developed using Visual Studio and Neo4j Browser for graph visualization.
-```
+> **Note on Environment**: My project targets .NET Core 2.2 as it was part of my thesis project in 2019. Due to the age of the dependencies (DotnetSpider 3.0, GraphQL 2.4), a .NET Core 2.2 SDK is required for compilation. The code is provided here primarily as a reference for the architectural patterns and graph database integration described in the thesis.
 
 ### Core Backend
 
@@ -113,7 +111,7 @@ Data is modeled in **Neo4j** to allow for high-performance relationship traversa
 
 - **Nodes**: `Article`, `Paragraph`, `Word`.
 
-- **Key Relationships**: `(Paragraph)-[:CONTAINS_WORD {count, frequency}]->(Word)`.
+- **Key Relationships**: `(Paragraph)-[:PARAGRAPH_CONTAINS {count, frequency}]->(Word)`.
 
 ```mermaid
 ---

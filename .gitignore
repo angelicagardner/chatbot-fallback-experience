@@ -1,0 +1,17 @@
+# .NET Core
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+
+# Visual Studio Code
+.vscode/
+
+# NuGet Packages
+*.nupkg
+packages/
+
+# OS generated files
+.DS_Store
+thumbs.db
